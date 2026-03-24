@@ -161,6 +161,7 @@ const GC={A:'var(--amber)',B:'var(--blue)',C:'var(--green)'};
 const SK='studio_tracker_v4';let S;try{S=JSON.parse(localStorage.getItem(SK)||'{}');}catch{S={};}
 if(!S.ch)S.ch={};if(!S.no)S.no={};if(!S.ms)S.ms={};if(!S.co)S.co={};if(!S.op)S.op={};
 function sv(){localStorage.setItem(SK,JSON.stringify(S));const e=document.getElementById('si');e.classList.add('show');clearTimeout(window._t);window._t=setTimeout(()=>e.classList.remove('show'),1200);}
+function sq(){localStorage.setItem(SK,JSON.stringify(S));}
 function st(id,b){document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));document.getElementById('p-'+id).classList.add('on');b.classList.add('on');}
 
 function rP(){
@@ -176,7 +177,7 @@ function rP(){
   document.getElementById('gL').textContent=dA+'/'+tA;
   rD();
 }
-function tg(i){S.op[i]=!S.op[i];sv();rP();}
+function tg(i){S.op[i]=!S.op[i];sq();rP();}
 function tc(id){S.ch[id]=!S.ch[id];sv();rP();}
 function sn(i,v){S.no[i]=v;sv();}
 
