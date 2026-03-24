@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Studio Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f3ef;--s1:#fff;--s2:#eae7e1;--bd:#d8d4cc;--amber:#c4880a;--ambg:#fef6e4;--ambd:#f0d88a;--red:#c0392b;--rbg:#fdeaea;--rbd:#f0aaaa;--green:#1e8449;--gbg:#e8f6ed;--gbd:#a3d9b8;--blue:#2c5fa1;--bbg:#e8f0fa;--txt:#1a1a1a;--dim:#6b6560;--muted:#a09890;--r:8px;--fb:'Plus Jakarta Sans',sans-serif;--fm:'JetBrains Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--txt);font-family:var(--fb);font-size:14px;min-height:100vh;padding-bottom:80px}
+.hdr{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:2px solid var(--bd);padding:12px 16px}
+.hdr-top{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
+.hdr h1{font-size:18px;font-weight:700;letter-spacing:-.3px}
+.hdr-sub{font-family:var(--fm);font-size:10px;color:var(--muted)}
+.gp{display:flex;align-items:center;gap:8px}
+.gp-bar{flex:1;height:5px;background:var(--s2);border-radius:3px;overflow:hidden}
+.gp-fill{height:100%;background:var(--green);border-radius:3px;transition:width .4s}
+.gp-lbl{font-family:var(--fm);font-size:11px;color:var(--dim);min-width:44px;text-align:right}
+.dash{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:12px 16px}
+.dc{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:10px 12px}
+.dc-l{font-size:10px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.dc-r{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px}
+.dc-v{font-family:var(--fm);font-size:13px;font-weight:600}
+.dc-s{font-family:var(--fm);font-size:9px;color:var(--muted)}
+.dc-b{height:3px;background:var(--s2);border-radius:2px;margin-top:6px;overflow:hidden}
+.dc-bf{height:100%;border-radius:2px;transition:width .4s}
+.tabs{display:flex;border-bottom:1px solid var(--bd);padding:0 12px;background:var(--s1)}
+.tab{flex:1;padding:11px 4px;text-align:center;font-family:var(--fm);font-size:10px;font-weight:500;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer}
+.tab.on{color:var(--txt);border-bottom-color:var(--txt);font-weight:600}
+.pnl{display:none;padding:12px 16px}.pnl.on{display:block}
+.ph{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:8px;overflow:hidden}
+.ph-hd{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;user-select:none}
+.ph-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;border:2px solid var(--bd);background:var(--s2)}
+.ph-dot.prog{border-color:var(--amber);background:var(--ambg)}.ph-dot.done{border-color:var(--green);background:var(--green)}
+.ph-n{flex:1;font-size:13px;font-weight:600}.ph-c{font-family:var(--fm);font-size:10px;color:var(--muted)}
+.ph-body{display:none;padding:0 14px 12px}.ph.open .ph-body{display:block}
+.chk{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--s2)}
+.chk:last-of-type{border:none}
+.chk input[type=checkbox]{width:18px;height:18px;margin-top:1px;accent-color:var(--green);flex-shrink:0}
+.chk label{font-size:12px;line-height:1.45;cursor:pointer}
+.chk.done label{color:var(--muted);text-decoration:line-through}
+.bk{display:inline-block;font-family:var(--fm);font-size:8px;font-weight:600;padding:1px 5px;border-radius:3px;background:var(--rbg);color:var(--red);border:1px solid var(--rbd);margin-left:4px;vertical-align:middle}
+.pw{background:var(--ambg);border:1px solid var(--ambd);border-radius:6px;padding:8px 10px;margin-bottom:8px}
+.pw b{font-size:11px;color:var(--amber)}.pw p{font-size:11px;color:var(--dim);line-height:1.4;margin-top:2px}
+.na{width:100%;min-height:50px;background:var(--bg);border:1px solid var(--bd);border-radius:6px;color:var(--txt);font-family:var(--fb);font-size:12px;padding:8px;resize:vertical;margin-top:8px}
+.na::placeholder{color:var(--muted)}
+.mf{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.mfb{padding:5px 10px;font-family:var(--fm);font-size:9px;font-weight:500;background:var(--s1);border:1px solid var(--bd);border-radius:6px;color:var(--dim);cursor:pointer}
+.mfb.on{background:var(--txt);color:var(--bg);border-color:var(--txt)}
+.mi{display:flex;align-items:center;gap:10px;background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:8px 12px;margin-bottom:4px}
+.md{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.md.none{background:var(--red)}.md.ordered{background:var(--amber)}.md.delivered{background:var(--green)}
+.mi-i{flex:1;min-width:0}.mi-n{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mi-d{font-size:10px;color:var(--muted)}
+.mi-a{display:flex;gap:4px;flex-shrink:0}
+.mb{padding:4px 8px;font-family:var(--fm);font-size:9px;background:var(--bg);border:1px solid var(--bd);border-radius:5px;color:var(--dim);cursor:pointer}
+.mb.on{background:var(--gbg);color:var(--green);border-color:var(--gbd)}
+.ch{font-size:12px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin:16px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--bd)}
+.ch:first-child{margin-top:0}
+.cs{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:10px 12px;margin-bottom:8px}
+.cs-r{display:flex;justify-content:space-between;align-items:baseline}
+.cs-l{font-size:11px;color:var(--dim)}.cs-v{font-family:var(--fm);font-size:13px;font-weight:600}
+.cs-b{height:3px;background:var(--s2);border-radius:2px;margin-top:6px;overflow:hidden}
+.cs-f{height:100%;border-radius:2px;transition:width .3s}
+.ci{display:flex;align-items:center;gap:8px;background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:8px 12px;margin-bottom:4px}
+.ci-i{flex:1;min-width:0}.ci-n{font-size:11px;font-weight:500}.ci-e{font-family:var(--fm);font-size:9px;color:var(--muted)}
+.ci-f{width:90px;flex-shrink:0}
+.ci-f input{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:5px;color:var(--txt);font-family:var(--fm);font-size:12px;padding:5px 6px}
+.ci-d{font-family:var(--fm);font-size:9px;width:65px;text-align:right;flex-shrink:0}
+.ci-d.ov{color:var(--red)}.ci-d.un{color:var(--green)}.ci-d.nu{color:var(--muted)}
+.tc{background:var(--s1);border:2px solid var(--txt);border-radius:var(--r);padding:14px;margin-bottom:14px}
+.tr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.tl{font-size:11px;font-weight:500;color:var(--dim)}.tv{font-family:var(--fm);font-size:15px;font-weight:600}
+.tv.g{color:var(--green)}.tv.r{color:var(--red)}.tv.a{color:var(--amber)}
+.si{position:fixed;bottom:16px;right:16px;background:var(--green);color:#fff;font-family:var(--fm);font-size:10px;padding:5px 12px;border-radius:100px;opacity:0;transition:opacity .3s;z-index:200;pointer-events:none}
+.si.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="hdr"><div class="hdr-top"><h1>Studio Tracker</h1><span class="hdr-sub">Oostende 2026</span></div><div class="gp"><div class="gp-bar"><div class="gp-fill" id="gB"></div></div><div class="gp-lbl" id="gL">0/0</div></div></div>
+<div class="dash" id="dash"></div>
+<div class="tabs"><button class="tab on" onclick="st('f',this)">Fases</button><button class="tab" onclick="st('m',this)">Materialen</button><button class="tab" onclick="st('k',this)">Kosten</button></div>
+<div class="pnl on" id="p-f"></div>
+<div class="pnl" id="p-m"><div class="mf" id="mf"></div><div id="ml"></div></div>
+<div class="pnl" id="p-k"><div class="tc"><div class="tr"><span class="tl">Raming incl. BTW</span><span class="tv" id="ctE"></span></div><div class="tr"><span class="tl">Werkelijk</span><span class="tv" id="ctA">-</span></div><div class="tr"><span class="tl">Verschil</span><span class="tv" id="ctD">-</span></div></div><div id="cl"></div></div>
+<div class="si" id="si">Opgeslagen</div>
+<script>
+const P=[
+{n:'Fase 1: Ventilatieopeningen',c:[{id:'f1a',t:'Posities ERV toevoer + afvoer markeren op flankerende muren',k:1},{id:'f1b',t:'Doorvoeren boren (Ø150) door flankerende muren, NIET door scheidingswand',k:1},{id:'f1c',t:'Terugslagkleppen monteren aan buitenzijde'}],w:[]},
+{n:'Fase 2: Voorzetwanden',c:[{id:'f2a',t:'EP 700 + Sylomer 30 muurbeugels monteren (max. 150 cm h.o.h.)',k:1},{id:'f2b',t:'Verticale profielen PC60/27 inhangen'},{id:'f2c',t:'Rotswol 45 mm bijsnijden (NIET knellen achter flensen)',k:1},{id:'f2d',t:'Perimeterprofiel PU 48/27 met 10 mm rubberstrip'},{id:'f2e',t:'Acoustic washers op schroeven flankerende muren',k:1},{id:'f2f',t:'Fermacell laag 1 (5 mm perimeterruimte)'},{id:'f2g',t:'Voegenlijm op alle naden (24u drogen)'}],w:[{t:'Ontkoppeling',d:'Geen enkel punt hard contact met basisconstructie. Een schroef zonder ontkoppeling = geluidsbrug.'},{t:'Rotswol niet knellen',d:'Bijsnijden met breekmes. Wol die profiel naar basiswand duwt = hard contact.'},{t:'Acoustic washers',d:'Verplicht op alle schroeven bij flankerende muren.'}]},
+{n:'Fase 3: Elektriciteit fase 0',c:[{id:'f3a',t:'Posities stopcontacten markeren op basiswanden'},{id:'f3b',t:'Doorvoeren boren voedingskabel'},{id:'f3c',t:'Groepenkast monteren (Muur 6, h. 160 cm)'},{id:'f3d',t:'Positie ventilatieopeningen bevestigen'}],w:[]},
+{n:'Fase 4: Elektriciteit fase 1',c:[{id:'f4a',t:'Kabelroutes trekken'},{id:'f4b',t:'Inbouwdozen monteren op Fermacell laag 1'},{id:'f4c',t:'Putty pads rondom elke inbouwdoos (6 vlakken)',k:1},{id:'f4d',t:'Kabeldoorgangen afdichten met soepele kit',k:1},{id:'f4e',t:'Geen stopcontacten rug-aan-rug (min. 60 cm)',k:1}],w:[{t:'Stopcontacten verspringen',d:'Min. 60 cm. Putty pads rondom alle 6 vlakken.'},{t:'Geen inbouwspots',d:'Inbouwspot = groot gat in akoestische schil. Gebruik opbouwarmaturen.'}]},
+{n:'Fase 5: Elektriciteit fase 2',c:[{id:'f5a',t:'Fermacell laag 2 (naden 60 cm verspringen)',k:1},{id:'f5b',t:'Soepele kit rondom elk stopcontact'},{id:'f5c',t:'Naden vullen met voegenlijm (24u drogen)'}],w:[{t:'Perimeterruimte',d:'5 mm rondom Fermacell. Vullen met soepele kit, NOOIT harde kit of pleister.'}]},
+{n:'Fase 6: Zwevende vloer',c:[{id:'f6a',t:'Perimeterstroken LANGS ALLE WANDEN (eerste stap!)',k:1},{id:'f6b',t:'Sylomer SR450 pads verlijmen (centraal)'},{id:'f6c',t:'Sylomer SR110 pads verlijmen (randen)'},{id:'f6d',t:'Balken plaatsen, min. 10 mm voor elke wand',k:1},{id:'f6e',t:'Minerale wol tussen balken'},{id:'f6f',t:'OSB laag 1 (NIET schroeven in beton)',k:1},{id:'f6g',t:'OSB laag 2 (naden verspringen)'},{id:'f6h',t:'Expansievoeg 10 mm vullen met soepele kit'},{id:'f6i',t:'Vloer raakt GEEN muur of voorzetwand',k:1}],w:[{t:'Perimeterstroken EERSTE stap',d:'Zonder perimeterstroken is alle vloerisolatie nutteloos.'},{t:'Vloer raakt niets',d:'OSB en balken raken NOOIT de wand. Min. 10 mm. Soepele kit.'}]},
+{n:'Fase 7: Dak',c:[{id:'f7a',t:'EP 700 hangers of Merfoflex-latten (ontkoppeld)'},{id:'f7b',t:'Gaten in dampscherm dichten met Tescon Vana',k:1},{id:'f7c',t:'Fermacell/gipskarton laag 1'},{id:'f7d',t:'Laag 2 (naden verspringen)'},{id:'f7e',t:'Akoestische kit perimeteraansluitingen'}],w:[{t:'Dampscherm niet beschadigen',d:'Alle gaten dichten met Tescon Vana tape. Elk gat = koudebrug + condensatie.'}]},
+{n:'Fase 8: Deuren en sas',c:[{id:'f8a',t:'Massieve deur(en) plaatsen (min. 40 mm, 40 kg)'},{id:'f8b',t:'Automatische drempelkier (Athmer)',k:1},{id:'f8c',t:'Compressierubber rondom kozijn'},{id:'f8d',t:'Soepele kitvoeg kozijn-muur'},{id:'f8e',t:'Saswanden afwerken'}],w:[{t:'Drempelkier verplicht',d:'Zonder drempelkier is alle deurisolatie nutteloos.'}]},
+{n:'Fase 9: Raam',c:[{id:'f9a',t:'Secundaire beglazing (andere glasdikte)'},{id:'f9b',t:'Akoestische kit rondom kader'}],w:[]},
+{n:'Fase 10: Ventilatie + keuring',c:[{id:'f10a',t:'ERV monteren en aansluiten'},{id:'f10b',t:'Inline silencers in beide kanaalstakken'},{id:'f10c',t:'Mini-split op ontkoppeld beugelset',k:1},{id:'f10d',t:'CO2-monitor testen'},{id:'f10e',t:'AREI-keuring (Vincotte/BTV/KEMA)',k:1}],w:[{t:'Ventilatie verplicht',d:'CO2 bij 2 personen na 30-60 min. gevaarlijk. Mini-split levert GEEN verse lucht.'},{t:'AREI-keuring',d:'Zonder conformiteitsattest is installatie niet verzekerd.'}]},
+{n:'Fase 11: Wandmeubel + audio',c:[{id:'f11a',t:'Modules A-D laten bouwen (schrijnwerker)'},{id:'f11b',t:'Modules plaatsen (min. 5 cm tot voorzetwand)',k:1},{id:'f11c',t:'19" rackrails monteren'},{id:'f11d',t:'Patchbays + KHE + stroomverdeler in sectie B'},{id:'f11e',t:'Vaste bekabeling: heads, cabs, mics'},{id:'f11f',t:'Multicore naar mixzone'},{id:'f11g',t:'Stroom via stroomverdeler (G1)'},{id:'f11h',t:'Testen signaalroutes'}],w:[{t:'Meubel nooit aan wand',d:'Min. 5 cm tot voorzetwand. Geen schroeven/klemmen. Elk contact = geluidsbrug.'},{t:'Geen patchbay voor speakers',d:'TRS patchbays niet geschikt voor speaker-level. Gebruik KHE ACS met load-bescherming.'}]}
+];
+const M=[
+{id:'m1',p:'Fase 2',n:'EP 700 + Sylomer beugels',q:'71',s:'geluidsisolatiedokter.be'},
+{id:'m2',p:'Fase 2',n:'Acoustic washers',q:'31',s:'geluidsisolatiedokter.be'},
+{id:'m3',p:'Fase 2',n:'Fermacell 60×260',q:'~76',s:'bouwhandel'},
+{id:'m4',p:'Fase 2',n:'Profielen + perimeter',q:'45',s:'bouwhandel'},
+{id:'m5',p:'Fase 2',n:'Akoestische kit',q:'~15',s:'bouwhandel'},
+{id:'m6',p:'Fase 4',n:'Inbouwdozen + putty pads',q:'~20',s:'bouwhandel'},
+{id:'m7',p:'Fase 6',n:'Sylomer SR450',q:'79',s:'geluidsisolatiedokter.be'},
+{id:'m8',p:'Fase 6',n:'Sylomer SR110',q:'20',s:'geluidsisolatiedokter.be'},
+{id:'m9',p:'Fase 6',n:'CLS-balken 38×63',q:'~40m',s:'bouwhandel'},
+{id:'m10',p:'Fase 6',n:'OSB 18 mm',q:'~18m²',s:'bouwhandel'},
+{id:'m11',p:'Fase 7',n:'EP 700 hangers',q:'dak',s:'geluidsisolatiedokter.be'},
+{id:'m12',p:'Fase 7',n:'Tescon Vana tape',q:'3 rol',s:'bouwkampioen.be'},
+{id:'m13',p:'Fase 8',n:'Massieve deuren',q:'2',s:'schrijnwerker'},
+{id:'m14',p:'Fase 8',n:'Drempelkier Athmer',q:'2',s:'online'},
+{id:'m15',p:'Fase 10',n:'ERV Zehnder',q:'1',s:'ventilatieshop.be'},
+{id:'m16',p:'Fase 10',n:'Inline silencer Ø150',q:'2',s:'lindab.be'},
+{id:'m17',p:'Fase 10',n:'Mini-split',q:'1',s:'HVAC'},
+{id:'m18',p:'Fase 10',n:'CO2-monitor',q:'1',s:'bol.com'},
+{id:'m19',p:'Fase 11',n:'Berkenmultiplex 18mm',q:'~7pl',s:'houthandel'},
+{id:'m20',p:'Fase 11',n:'19" rackrails',q:'6',s:'Thomann'},
+{id:'m21',p:'Fase 11',n:'19" rack-laden',q:'4',s:'Thomann'},
+{id:'m22',p:'Fase 11',n:'KHE ACS 4×4',q:'1',s:'khe-audio'},
+{id:'m23',p:'Fase 11',n:'Instr. patchbay TRS',q:'1',s:'Thomann'},
+{id:'m24',p:'Fase 11',n:'XLR patchbay',q:'1',s:'Thomann'},
+{id:'m25',p:'Fase 11',n:'Stroomverdeler 19"',q:'1',s:'Thomann'},
+{id:'m26',p:'Fase 11',n:'Multicore 8ch',q:'1',s:'Thomann'},
+{id:'m27',p:'Fase 11',n:'Speaker-kabels',q:'6',s:'Thomann'},
+{id:'m28',p:'Fase 11',n:'Gitaarophangshaken',q:'4',s:'Thomann'},
+{id:'m29',p:'Fase 11',n:'Viltglijders + doorvoertules',q:'div',s:'bouwhandel'}
+];
+const C=[
+{id:'c1',g:'A',n:'Ontkoppelingsmaterialen',a:1338,b:1338},
+{id:'c2',g:'A',n:'Bouwhardware voorzetwanden',a:1700,b:2413},
+{id:'c3',g:'A',n:'Sylomer pads',a:552,b:552},
+{id:'c4',g:'A',n:'Vloer: OSB, balken, kit',a:220,b:340},
+{id:'c5',g:'A',n:'Dak: ontkoppeling + afwerking',a:363,b:726},
+{id:'c6',g:'A',n:'Ventilatie + klimaat',a:2130,b:3350},
+{id:'c7',g:'A',n:'Deuren + sas',a:760,b:1500},
+{id:'c8',g:'A',n:'Raam',a:150,b:800},
+{id:'c9',g:'A',n:'Kleine materialen',a:97,b:145},
+{id:'c10',g:'A',n:'Elektriciteit',a:484,b:847},
+{id:'c11',g:'A',n:'Arbeid aannemer',a:3710,b:4556},
+{id:'c12',g:'A',n:'Arbeid elektricien',a:636,b:953},
+{id:'c13',g:'A',n:'Arbeid HVAC',a:605,b:605},
+{id:'c14',g:'B',n:'Schrijnwerker materiaal',a:830,b:1050},
+{id:'c15',g:'B',n:'Schrijnwerker arbeid',a:1800,b:3300},
+{id:'c16',g:'B',n:'Hardware meubel',a:205,b:250},
+{id:'c17',g:'B',n:'19" rack-componenten',a:210,b:260},
+{id:'c18',g:'C',n:'KHE ACS 4×4',a:1050,b:1200},
+{id:'c19',g:'C',n:'Instrument patchbay',a:70,b:120},
+{id:'c20',g:'C',n:'XLR patchbay',a:120,b:200},
+{id:'c21',g:'C',n:'Stroomverdeler',a:40,b:65},
+{id:'c22',g:'C',n:'Multicore',a:65,b:100},
+{id:'c23',g:'C',n:'Kabels (speaker+XLR+patch)',a:130,b:200}
+];
+const GL={A:'Akoestische renovatie',B:'Wandmeubel',C:'Audio-apparatuur'};
+const GC={A:'var(--amber)',B:'var(--blue)',C:'var(--green)'};
+
+const SK='studio_tracker_v4';let S;try{S=JSON.parse(localStorage.getItem(SK)||'{}');}catch{S={};}
+if(!S.ch)S.ch={};if(!S.no)S.no={};if(!S.ms)S.ms={};if(!S.co)S.co={};if(!S.op)S.op={};
+function sv(){localStorage.setItem(SK,JSON.stringify(S));const e=document.getElementById('si');e.classList.add('show');clearTimeout(window._t);window._t=setTimeout(()=>e.classList.remove('show'),1200);}
+function st(id,b){document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));document.getElementById('p-'+id).classList.add('on');b.classList.add('on');}
+
+function rP(){
+  let h='',tA=0,dA=0;
+  P.forEach((p,i)=>{
+    const t=p.c.length,d=p.c.filter(c=>S.ch[c.id]).length;tA+=t;dA+=d;
+    const dc=d===0?'':d===t?'done':'prog';
+    h+=`<div class="ph ${S.op[i]?'open':''}"><div class="ph-hd" onclick="tg(${i})"><div class="ph-dot ${dc}"></div><div class="ph-n">${p.n}</div><div class="ph-c">${d}/${t}</div></div><div class="ph-body">${p.w.map(w=>`<div class="pw"><b>⚠ ${w.t}</b><p>${w.d}</p></div>`).join('')}${p.c.map(ck=>`<div class="chk ${S.ch[ck.id]?'done':''}"><input type="checkbox" ${S.ch[ck.id]?'checked':''} onchange="tc('${ck.id}')"><label onclick="this.previousElementSibling.click()">${ck.t}${ck.k?'<span class="bk">KRITIEK</span>':''}</label></div>`).join('')}<textarea class="na" placeholder="Notities..." oninput="sn(${i},this.value)">${S.no[i]||''}</textarea></div></div>`;
+  });
+  document.getElementById('p-f').innerHTML=h;
+  const pct=tA?Math.round(dA/tA*100):0;
+  document.getElementById('gB').style.width=pct+'%';
+  document.getElementById('gL').textContent=dA+'/'+tA;
+  rD();
+}
+function tg(i){S.op[i]=!S.op[i];sv();rP();}
+function tc(id){S.ch[id]=!S.ch[id];sv();rP();}
+function sn(i,v){S.no[i]=v;sv();}
+
+function rD(){
+  let tA=0,dA=0;for(let i=0;i<=9;i++){P[i].c.forEach(c=>{tA++;if(S.ch[c.id])dA++;});}
+  let tB=0,dB=0;P[10].c.forEach(c=>{tB++;if(S.ch[c.id])dB++;});
+  const pA=tA?Math.round(dA/tA*100):0,pB=tB?Math.round(dB/tB*100):0;
+  const bu={};['A','B','C'].forEach(g=>{let e=0,a=0,h=false;C.filter(c=>c.g===g).forEach(c=>{e+=(c.a+c.b)/2;const v=parseFloat(S.co[c.id]);if(v){a+=v;h=true;}});bu[g]={e:Math.round(e),a:h?Math.round(a):null};});
+  const dc=(l,p,b,col)=>{const v=b.a!==null?'€'+b.a.toLocaleString('nl-BE'):'€'+b.e.toLocaleString('nl-BE');const s=b.a!==null?'werkelijk':'raming';return`<div class="dc"><div class="dc-l">${l}</div><div class="dc-r"><span class="dc-v">${p}%</span><span class="dc-s">voortgang</span></div><div class="dc-b"><div class="dc-bf" style="width:${p}%;background:${col}"></div></div><div class="dc-r" style="margin-top:6px"><span class="dc-v" style="font-size:11px">${v}</span><span class="dc-s">${s}</span></div></div>`;};
+  document.getElementById('dash').innerHTML=dc('A. Renovatie',pA,bu.A,GC.A)+dc('B. Meubel',pB,bu.B,GC.B)+dc('C. Audio',pB,bu.C,GC.C);
+}
+
+let mF='Alle';
+function rM(){
+  const ps=[...new Set(M.map(m=>m.p))];
+  document.getElementById('mf').innerHTML=['Alle',...ps].map(p=>`<button class="mfb ${mF===p?'on':''}" onclick="mF='${p}';rM();">${p}</button>`).join('');
+  const it=mF==='Alle'?M:M.filter(m=>m.p===mF);
+  document.getElementById('ml').innerHTML=it.map(m=>{
+    const s=S.ms[m.id]||'none';
+    return`<div class="mi"><div class="md ${s}"></div><div class="mi-i"><div class="mi-n">${m.n}</div><div class="mi-d">${m.q} · ${m.s}</div></div><div class="mi-a"><button class="mb ${s==='ordered'||s==='delivered'?'on':''}" onclick="sm('${m.id}','${s==='none'?'ordered':'none'}')">Best.</button><button class="mb ${s==='delivered'?'on':''}" onclick="sm('${m.id}','${s==='delivered'?'ordered':'delivered'}')">Gelev.</button></div></div>`;
+  }).join('');
+}
+function sm(id,v){S.ms[id]=v;sv();rM();}
+
+function rC(){
+  let tE=0,tAc=0,html='';
+  ['A','B','C'].forEach(g=>{
+    let gE=0,gA=0,hA=false;
+    C.filter(c=>c.g===g).forEach(c=>{gE+=(c.a+c.b)/2;const v=parseFloat(S.co[c.id]);if(v){gA+=v;hA=true;}});
+    tE+=gE;tAc+=gA;
+    const pct=hA?Math.min(Math.round(gA/gE*100),150):0;const ov=pct>105;
+    html+=`<div class="ch">${g}. ${GL[g]}</div><div class="cs"><div class="cs-r"><span class="cs-l">Raming: €${Math.round(gE).toLocaleString('nl-BE')}</span><span class="cs-v" style="color:${hA?(ov?'var(--red)':'var(--green)'):'var(--dim)'}">${hA?'€'+Math.round(gA).toLocaleString('nl-BE'):'-'}</span></div><div class="cs-b"><div class="cs-f" style="width:${Math.min(pct,100)}%;background:${ov?'var(--red)':GC[g]}"></div></div></div>`;
+    C.filter(c=>c.g===g).forEach(c=>{
+      const mid=(c.a+c.b)/2;const act=S.co[c.id]||'';const aN=parseFloat(act)||null;
+      const es=c.a===c.b?'€'+c.a:'€'+c.a+'-'+c.b;
+      let dh='',dcl='nu';
+      if(aN!==null){const d=aN-mid;dcl=d>50?'ov':d<-50?'un':'nu';dh=(d>0?'+':'')+'€'+Math.round(d);}
+      html+=`<div class="ci"><div class="ci-i"><div class="ci-n">${c.n}</div><div class="ci-e">${es}</div></div><div class="ci-f"><input type="number" placeholder="0" value="${act}" oninput="sc('${c.id}',this.value)" inputmode="decimal"></div><div class="ci-d ${dcl}">${dh}</div></div>`;
+    });
+  });
+  document.getElementById('cl').innerHTML=html;
+  document.getElementById('ctE').textContent='€'+Math.round(tE).toLocaleString('nl-BE');
+  if(tAc>0){document.getElementById('ctA').textContent='€'+Math.round(tAc).toLocaleString('nl-BE');document.getElementById('ctA').className='tv a';const d=tAc-tE;document.getElementById('ctD').textContent=(d>0?'+':'')+'€'+Math.round(d).toLocaleString('nl-BE');document.getElementById('ctD').className='tv '+(d>200?'r':d<-200?'g':'a');}
+}
+function sc(id,v){S.co[id]=v;sv();rC();rD();}
+
+rP();rM();rC();
+</script>
+</body>
+</html>
