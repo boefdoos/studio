@@ -113,6 +113,8 @@ const P=[
 {n:'Fase 11: Wandmeubel + audio',c:[{id:'f11a',t:'Modules A-D laten bouwen (schrijnwerker)'},{id:'f11b',t:'Modules plaatsen (min. 5 cm tot voorzetwand)',k:1},{id:'f11c',t:'19" rackrails monteren'},{id:'f11d',t:'Patchbays + KHE + stroomverdeler in sectie B'},{id:'f11e',t:'Vaste bekabeling: heads, cabs, mics'},{id:'f11f',t:'Multicore naar mixzone'},{id:'f11g',t:'Stroom via stroomverdeler (G1)'},{id:'f11h',t:'Testen signaalroutes'}],w:[{t:'Meubel nooit aan wand',d:'Min. 5 cm tot voorzetwand. Geen schroeven/klemmen. Elk contact = geluidsbrug.'},{t:'Geen patchbay voor speakers',d:'TRS patchbays niet geschikt voor speaker-level. Gebruik KHE ACS met load-bescherming.'}]}
 ];
 const M=[
+{id:'m0a',p:'Fase 1',n:'Doorvoerbuizen Ø150 mm',q:'2',s:'bouwhandel'},
+{id:'m0b',p:'Fase 1',n:'Terugslagkleppen Ø150 mm',q:'2',s:'bouwhandel'},
 {id:'m1',p:'Fase 2',n:'EP 700 + Sylomer beugels',q:'71',s:'geluidsisolatiedokter.be'},
 {id:'m2',p:'Fase 2',n:'Acoustic washers',q:'31',s:'geluidsisolatiedokter.be'},
 {id:'m3',p:'Fase 2',n:'Fermacell 60×260',q:'~76',s:'bouwhandel'},
@@ -255,14 +257,14 @@ function rC(){
     gc.forEach(c=>{gE+=(c.a+c.b)/2;const v=parseFloat(S.co[c.id]);if(v){gA+=v;hA=true;}});
     tE+=gE;tAc+=gA;
     const pct=hA?Math.min(Math.round(gA/gE*100),150):0;const ov=pct>105;
-    html+=`<div class="ch">${g}. ${GL[g]}</div><div class="cs"><div class="cs-r"><span class="cs-l">Raming: €${Math.round(gE).toLocaleString('nl-BE')}</span><span class="cs-v" style="color:${hA?(ov?'var(--red)':'var(--green)'):'var(--dim)'}">${hA?'€'+Math.round(gA).toLocaleString('nl-BE'):'-'}</span></div><div class="cs-b"><div class="cs-f" style="width:${Math.min(pct,100)}%;background:${ov?'var(--red)':GC[g]}"></div></div></div>`;
+    html+=`<div class="ch">${g}. ${GL[g]}</div><div class="cs" id="cs_${g}"><div class="cs-r"><span class="cs-l">Raming: €${Math.round(gE).toLocaleString('nl-BE')}</span><span class="cs-v" style="color:${hA?(ov?'var(--red)':'var(--green)'):'var(--dim)'}">${hA?'€'+Math.round(gA).toLocaleString('nl-BE'):'-'}</span></div><div class="cs-b"><div class="cs-f" style="width:${Math.min(pct,100)}%;background:${ov?'var(--red)':GC[g]}"></div></div></div>`;
     gc.forEach(c=>{
       const mid=(c.a+c.b)/2;const act=S.co[c.id]||'';const aN=parseFloat(act)||null;
       const es=c.a===c.b?'€'+c.a:'€'+c.a+'-'+c.b;
       const isCustom=c.id.startsWith('u');
       let dh='',dcl='nu';
       if(aN!==null){const d=aN-mid;dcl=d>50?'ov':d<-50?'un':'nu';dh=(d>0?'+':'')+'€'+Math.round(d);}
-      html+=`<div class="ci"><div class="ci-i"><div class="ci-n">${c.n}${isCustom?'<span class="custom-tag">EIGEN</span>':''}</div><div class="ci-e">${es}</div></div><div class="ci-f"><input type="number" placeholder="0" value="${act}" oninput="sc('${c.id}',this.value)" inputmode="decimal"></div><div class="ci-d ${dcl}">${dh}</div>${isCustom?`<button class="del-btn" onclick="delCost('${c.id}')" title="Verwijderen">×</button>`:''}</div>`;
+      html+=`<div class="ci"><div class="ci-i"><div class="ci-n">${c.n}${isCustom?'<span class="custom-tag">EIGEN</span>':''}</div><div class="ci-e">${es}</div></div><div class="ci-f"><input type="number" placeholder="0" value="${act}" oninput="sc('${c.id}',this.value)" inputmode="decimal"></div><div class="ci-d ${dcl}" id="cd_${c.id}">${dh}</div>${isCustom?`<button class="del-btn" onclick="delCost('${c.id}')" title="Verwijderen">×</button>`:''}</div>`;
     });
   });
   html+='<button class="add-btn" onclick="showAddCost()">+ Kostenpost toevoegen</button><div id="addCostForm"></div>';
@@ -282,7 +284,30 @@ function addCost(){
   sv();rC();rD();
 }
 function delCost(id){S.ucc=S.ucc.filter(c=>c.id!==id);delete S.co[id];sv();rC();rD();}
-function sc(id,v){S.co[id]=v;sv();rC();rD();}
+function sc(id,v){S.co[id]=v;sv();rCT();rD();}
+
+function rCT(){
+  const allCosts=[...C,...S.ucc];
+  let tE=0,tAc=0;
+  ['A','B','C'].forEach(g=>{
+    const gc=allCosts.filter(c=>c.g===g);
+    let gE=0,gA=0,hA=false;
+    gc.forEach(c=>{gE+=(c.a+c.b)/2;const v=parseFloat(S.co[c.id]);if(v){gA+=v;hA=true;}});
+    tE+=gE;tAc+=gA;
+    const pct=hA?Math.min(Math.round(gA/gE*100),150):0;const ov=pct>105;
+    const el=document.getElementById('cs_'+g);
+    if(el){el.innerHTML=`<div class="cs-r"><span class="cs-l">Raming: €${Math.round(gE).toLocaleString('nl-BE')}</span><span class="cs-v" style="color:${hA?(ov?'var(--red)':'var(--green)'):'var(--dim)'}">${hA?'€'+Math.round(gA).toLocaleString('nl-BE'):'-'}</span></div><div class="cs-b"><div class="cs-f" style="width:${Math.min(pct,100)}%;background:${ov?'var(--red)':GC[g]}"></div></div>`;}
+    gc.forEach(c=>{
+      const mid=(c.a+c.b)/2;const aN=parseFloat(S.co[c.id])||null;
+      const del=document.getElementById('cd_'+c.id);
+      if(del&&aN!==null){const d=aN-mid;const dcl=d>50?'ov':d<-50?'un':'nu';del.className='ci-d '+dcl;del.textContent=(d>0?'+':'')+'€'+Math.round(d);}
+      else if(del){del.className='ci-d nu';del.textContent='';}
+    });
+  });
+  document.getElementById('ctE').textContent='€'+Math.round(tE).toLocaleString('nl-BE');
+  if(tAc>0){document.getElementById('ctA').textContent='€'+Math.round(tAc).toLocaleString('nl-BE');document.getElementById('ctA').className='tv a';const d=tAc-tE;document.getElementById('ctD').textContent=(d>0?'+':'')+'€'+Math.round(d).toLocaleString('nl-BE');document.getElementById('ctD').className='tv '+(d>200?'r':d<-200?'g':'a');}
+  else{document.getElementById('ctA').textContent='-';document.getElementById('ctA').className='tv';document.getElementById('ctD').textContent='-';document.getElementById('ctD').className='tv';}
+}
 
 rP();rM();rC();
 </script>
